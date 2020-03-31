@@ -4,6 +4,7 @@ import pyaudio
 import wave
 import re
 import os
+import pywt
 
 
 class App():
@@ -77,8 +78,14 @@ class App():
 
 
     def startrecording(self):
-        if self.isrecording or self.article == "":
+        if self.article == "" or self.currentSen == len(self.sentences):
             return
+
+        if self.isrecording:
+            self.isrecording = False
+            self.t.join()
+            self.frames.clear()
+
         self.p = pyaudio.PyAudio()
         self.stream = self.p.open(format=self.sample_format, channels=self.channels, rate=self.fs,
                                   frames_per_buffer=self.chunk, input=True)
@@ -94,7 +101,6 @@ class App():
         self.isrecording = False
         print('recording complete')
 
-
         path = os.path.dirname(__file__)
         filename = path + "/data/" + str(self.article) + "/" + str(self.article) + "_" + str(self.currentSen) + ".wav"
         wf = wave.open(filename, 'wb')
@@ -103,6 +109,14 @@ class App():
         wf.setframerate(self.fs)
         wf.writeframes(b''.join(self.frames))
         wf.close()
+
+        filename = str(self.article) + "_" + str(self.currentSen) + ".wav"
+        textpath = path + "/data/" + str(self.article) + "/" + str(self.article) + "_result.txt"
+        print(textpath)
+        f = open(textpath, 'a', encoding='utf-8')
+        f.write(filename + '\n' + self.sentences[self.currentSen] + '\n')
+        f.close()
+
         self.frames.clear()
         self.currentSen += 1
         if self.currentSen >= len(self.sentences):
