@@ -68,13 +68,25 @@ class CSVReader:
         return s.encode('utf-8')
 
     def findFile(self, dirpath, dirname, filename):
-        dirname = re.split('-|  *|_', dirname)[0].lower()
-        dirname = self.no_accent_vietnamese(dirname)
+        dirname = re.split('-|  *|_', dirname)
+        for i in range(len(dirname)):
+            dirname[i] = dirname[i].lower()
+            dirname[i] = self.no_accent_vietnamese(dirname[i])
+
         for subdir, dirs, files in os.walk(dirpath):
             basename = os.path.basename(subdir)
-            basename = re.split('-|  *|_', basename)[0].lower()
-            basename = self.no_accent_vietnamese(basename)
-            if basename != dirname:
+            basename = re.split('-|  *|_', basename)
+            same = True
+            for i in range(len(basename)):
+                basename[i] = basename[i].lower()
+                basename[i] = self.no_accent_vietnamese(basename[i])
+            if len(basename) != len(dirname):
+                same = False
+            else:
+                for i in range(len(basename)):
+                    if basename[i] != dirname[i]:
+                        same = False
+            if not same:
                 continue
             for file in files:
                 if file == filename:
@@ -83,4 +95,4 @@ class CSVReader:
 
 if __name__ == '__main__':
     reader = CSVReader()
-    reader.recordWord("mot tu gi do")
+    reader.recordWord('trong')
