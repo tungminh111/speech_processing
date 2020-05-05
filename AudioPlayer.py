@@ -1,4 +1,3 @@
-
 import os
 
 import pyaudio
@@ -57,7 +56,7 @@ class AudioPlayer:
         # 'output = True' indicates that the sound will be played rather than recorded
         instream = p.open(format = p.get_format_from_width(self.SAMPLEWIDTH),
                         channels = self.NCHANNELS,
-                        rate = int(self.RATE * 0.7),
+                        rate = int(self.RATE * 0.6),
                         output = True)
 
         # Read data in chunks
@@ -85,6 +84,7 @@ class AudioPlayer:
         of.setsampwidth(self.SAMPLEWIDTH)
         of.setframerate(self.RATE)
         of.writeframes(b''.join(self.frames))
+        self.frames = []
         of.close()
 
     def process(self):
