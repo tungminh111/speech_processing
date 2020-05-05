@@ -49,5 +49,7 @@ class CSVReader:
                 if file == filename:
                     return os.path.join(subdir, filename)
 
-reader = CSVReader(['17020709'])
-reader.recordWord('chiếc')
+
+if __name__ == '__main__':
+    reader = CSVReader(['17020709'])
+    reader.recordWord('chiếc')
