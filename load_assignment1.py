@@ -76,5 +76,7 @@ def download_by_student_id(student_id):
             download_response(r)
             print('--------------------------------------------------------')
         # break # comment this line to process all assignments
-
-download_by_student_id('17020709')
+if __name__ == '__main__':
+    mssv = [17020616, 17021184, 17021186, 17021187, 17020709, 17021194, 17021200, 17020039, 17021059, 17020042, 16022494, 17021311]
+    for id in mssv:
+        download_by_student_id(str(id))
