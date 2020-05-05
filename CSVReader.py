@@ -4,10 +4,15 @@ import re
 from AudioPlayer import AudioPlayer
 
 class CSVReader:
-    def __init__(self, listID):
+    def __init__(self):
         self.reader = None
-        self.mssv = listID
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
+        self.mssv = []
+        dirname = os.path.join(self.dir_path, 'assignment1')
+        for subdirname in os.listdir(dirname):
+            if subdirname[:8] not in self.mssv:
+                self.mssv.append(subdirname[:8])
+
 
     def recordWord(self, s):
         with open('text-data.csv', mode='r', encoding='utf-8') as csv_file:
@@ -15,17 +20,18 @@ class CSVReader:
             for row in csv_reader:
                 if row['Mã SV'] not in self.mssv:
                     continue
+
+                dirname = os.path.join(self.dir_path, 'assignment1')
+                for subdirname in os.listdir(dirname):
+                    if not os.path.isdir(os.path.join(dirname, subdirname)):
+                        continue
+                    if subdirname[:8] == row['Mã SV']:
+                        dirname = os.path.join(dirname, subdirname)
+                        break
+
                 for key, value in row.items():
                     if key != 'STT' and key != 'Mã SV' and key != 'Họ và tên':
                         lineList = value.split('\n')
-
-                        dirname = os.path.join(self.dir_path, 'assignment1')
-                        for subdirname in os.listdir(dirname):
-                            if not os.path.isdir(os.path.join(dirname, subdirname)):
-                                continue
-                            if subdirname[:8] == row['Mã SV']:
-                                dirname = os.path.join(dirname, subdirname)
-                                break
 
                         for id in range((len(lineList) - 1) // 2):
 
@@ -49,7 +55,6 @@ class CSVReader:
                 if file == filename:
                     return os.path.join(subdir, filename)
 
-
 if __name__ == '__main__':
-    reader = CSVReader(['17020709'])
-    reader.recordWord('chiếc')
+    reader = CSVReader()
+    reader.recordWord('trong')
