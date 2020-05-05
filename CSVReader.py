@@ -41,18 +41,41 @@ class CSVReader:
 
                             wordList = re.split('\.|,| * ',sentence)
                             if s in wordList:
-                                filename = self.findFile(dirname, filename)
+                                filename = self.findFile(dirname, key, filename)
                                 if filename == 'not found':
                                     continue
-                                print("Current sentence: " + sentence)
+                                print("Current sentence:",sentence)
                                 con = False
                                 while not con:
                                     ap = AudioPlayer(filename, s)
                                     con = ap.process()
 
+    def no_accent_vietnamese(self, s):
+        s = re.sub(u'[àáạảãâầấậẩẫăằắặẳẵ]', 'a', s)
+        s = re.sub(u'[ÀÁẠẢÃĂẰẮẶẲẴÂẦẤẬẨẪ]', 'A', s)
+        s = re.sub(u'èéẹẻẽêềếệểễ', 'e', s)
+        s = re.sub(u'ÈÉẸẺẼÊỀẾỆỂỄ', 'E', s)
+        s = re.sub(u'òóọỏõôồốộổỗơờớợởỡ', 'o', s)
+        s = re.sub(u'ÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠ', 'O', s)
+        s = re.sub(u'ìíịỉĩ', 'i', s)
+        s = re.sub(u'ÌÍỊỈĨ', 'I', s)
+        s = re.sub(u'ùúụủũưừứựửữ', 'u', s)
+        s = re.sub(u'ƯỪỨỰỬỮÙÚỤỦŨ', 'U', s)
+        s = re.sub(u'ỳýỵỷỹ', 'y', s)
+        s = re.sub(u'ỲÝỴỶỸ', 'Y', s)
+        s = re.sub(u'Đ', 'D', s)
+        s = re.sub(u'đ', 'd', s)
+        return s.encode('utf-8')
 
-    def findFile(self, dirpath, filename):
+    def findFile(self, dirpath, dirname, filename):
+        dirname = re.split('-|  *|_', dirname)[0].lower()
+        dirname = self.no_accent_vietnamese(dirname)
         for subdir, dirs, files in os.walk(dirpath):
+            basename = os.path.basename(subdir)
+            basename = re.split('-|  *|_', basename)[0].lower()
+            basename = self.no_accent_vietnamese(basename)
+            if basename != dirname:
+                continue
             for file in files:
                 if file == filename:
                     return os.path.join(subdir, filename)
@@ -60,4 +83,4 @@ class CSVReader:
 
 if __name__ == '__main__':
     reader = CSVReader()
-    reader.recordWord('trong')
+    reader.recordWord("mot tu gi do")
