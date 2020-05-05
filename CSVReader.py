@@ -42,6 +42,8 @@ class CSVReader:
                             wordList = re.split('\.|,| * ',sentence)
                             if s in wordList:
                                 filename = self.findFile(dirname, filename)
+                                if filename == 'not found':
+                                    continue
                                 print("Current sentence: " + sentence)
                                 con = False
                                 while not con:
@@ -54,6 +56,7 @@ class CSVReader:
             for file in files:
                 if file == filename:
                     return os.path.join(subdir, filename)
+        return 'not found'
 
 if __name__ == '__main__':
     reader = CSVReader()
