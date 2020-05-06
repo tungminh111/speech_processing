@@ -1,7 +1,6 @@
 import csv
 import os
 import re
-from AudioPlayer import AudioPlayer
 
 class CSVReader:
     def __init__(self):
@@ -13,8 +12,17 @@ class CSVReader:
             if subdirname[:8] not in self.mssv:
                 self.mssv.append(subdirname[:8])
 
+        self.ouput_path = os.path.join(self.dir_path, "output_data")
+
 
     def recordWord(self, s):
+        output_path = os.path.join(self.ouput_path, s)
+        output_path = os.path.join(output_path, s + ".txt")
+        #wf = open(output_path, 'w', encoding='utf-8')
+        orgS = s
+        s = s.lower()
+        s = re.split('  *', s)
+        c = 0
         with open('text-data.csv', mode='r', encoding='utf-8') as csv_file:
             csv_reader = csv.DictReader(csv_file)
             for row in csv_reader:
@@ -28,7 +36,6 @@ class CSVReader:
                     if subdirname[:8] == row['Mã SV']:
                         dirname = os.path.join(dirname, subdirname)
                         break
-
                 for key, value in row.items():
                     if key != 'STT' and key != 'Mã SV' and key != 'Họ và tên':
                         lineList = value.split('\n')
@@ -40,15 +47,28 @@ class CSVReader:
                             sentence = str(sentence).lower()
 
                             wordList = re.split('\.|,| * ',sentence)
-                            if s in wordList:
+                            if self.match(s, wordList):
                                 filename = self.findFile(dirname, key, filename)
                                 if filename == 'not found':
                                     continue
-                                print("Current sentence:",sentence)
-                                con = False
-                                while not con:
-                                    ap = AudioPlayer(filename, s)
-                                    con = ap.process()
+                                c += 1
+                                #self.writeFile(wf, filename)
+        #wf.close()
+        print(c)
+
+    def match(self, s, t):
+        for i in range(len(t) - len(s) + 1):
+            cur = True
+            for j in range(len(s)):
+                if s[j] != t[i + j]:
+                    cur = False
+                    break
+            if cur:
+                return True
+        return False
+
+    def writeFile(self, wf, filename):
+        wf.write(os.fsdecode(filename) + "\n")
 
     def no_accent_vietnamese(self, s):
         s = re.sub(u'[àáạảãâầấậẩẫăằắặẳẵ]', 'a', s)
@@ -95,4 +115,4 @@ class CSVReader:
 
 if __name__ == '__main__':
     reader = CSVReader()
-    reader.recordWord('trong')
+    reader.recordWord('')
