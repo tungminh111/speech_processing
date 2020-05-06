@@ -18,7 +18,7 @@ class CSVReader:
     def recordWord(self, s):
         output_path = os.path.join(self.ouput_path, s)
         output_path = os.path.join(output_path, s + ".txt")
-        #wf = open(output_path, 'w', encoding='utf-8')
+        wf = open(output_path, 'w', encoding='utf-8')
         orgS = s
         s = s.lower()
         s = re.split('  *', s)
@@ -52,8 +52,8 @@ class CSVReader:
                                 if filename == 'not found':
                                     continue
                                 c += 1
-                                #self.writeFile(wf, filename)
-        #wf.close()
+                                self.writeFile(wf, filename)
+        wf.close()
         print(c)
 
     def match(self, s, t):
